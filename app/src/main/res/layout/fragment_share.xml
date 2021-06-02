@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorLightGray">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="70dp"
+            android:background="@color/white"
+            ads:layout_constraintBottom_toBottomOf="parent"
+            ads:layout_constraintEnd_toEndOf="parent"
+            ads:layout_constraintStart_toStartOf="parent"
+            ads:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/select_button"
+            android:layout_width="50dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:tint="@color/colorBlue"
+            android:src="@android:drawable/ic_menu_camera"
+            ads:layout_constraintEnd_toStartOf="@+id/editDescription"
+            ads:layout_constraintHorizontal_bias="0.5"
+            ads:layout_constraintStart_toStartOf="parent"
+            ads:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+
+        <EditText
+            android:id="@+id/editDescription"
+            android:layout_width="241dp"
+            android:layout_height="43dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/white"
+            android:ems="10"
+            android:hint="Your description"
+            android:inputType="textPersonName"
+            ads:layout_constraintEnd_toStartOf="@+id/send_button"
+            ads:layout_constraintHorizontal_bias="0.5"
+            ads:layout_constraintStart_toEndOf="@+id/select_button"
+            ads:layout_constraintTop_toTopOf="@+id/select_button" />
+
+        <ImageButton
+            android:id="@+id/send_button"
+            android:layout_width="48dp"
+            android:layout_height="47dp"
+            android:layout_marginEnd="16dp"
+            android:src="@android:drawable/ic_menu_send"
+            app:tint="@color/purple_200"
+            ads:layout_constraintEnd_toEndOf="parent"
+            ads:layout_constraintHorizontal_bias="0.5"
+            ads:layout_constraintStart_toEndOf="@+id/editDescription"
+            ads:layout_constraintTop_toTopOf="@+id/editDescription" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

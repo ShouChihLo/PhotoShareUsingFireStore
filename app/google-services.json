@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_number": "468470057193",
+    "firebase_url": "https://deft-strata-314402-default-rtdb.firebaseio.com",
+    "project_id": "deft-strata-314402",
+    "storage_bucket": "deft-strata-314402.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:468470057193:android:0b4c886ed302e68fb38878",
+        "android_client_info": {
+          "package_name": "com.example.photoshare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "468470057193-aggfdv24lr253vtr5nu8po4gddknltkb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.photoshare",
+            "certificate_hash": "53d77a79cb57c9b970eac01b2978cc2f79b70b9a"
+          }
+        },
+        {
+          "client_id": "468470057193-dqtbd1ihg6b8i294kq65sccc5vg2ibim.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsH2YWPD5RM-X2XPtgw2TDZts9G9rY_e0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "468470057193-dqtbd1ihg6b8i294kq65sccc5vg2ibim.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:468470057193:android:9f3ed8bf37d758a6b38878",
+        "android_client_info": {
+          "package_name": "com.example.photoshareusingfirestore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "468470057193-de6drn0v453tne0ivljg7ae92mhmdv8q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.photoshareusingfirestore",
+            "certificate_hash": "53d77a79cb57c9b970eac01b2978cc2f79b70b9a"
+          }
+        },
+        {
+          "client_id": "468470057193-dqtbd1ihg6b8i294kq65sccc5vg2ibim.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsH2YWPD5RM-X2XPtgw2TDZts9G9rY_e0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "468470057193-dqtbd1ihg6b8i294kq65sccc5vg2ibim.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

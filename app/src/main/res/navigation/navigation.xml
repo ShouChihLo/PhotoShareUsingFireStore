@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/shareFragment">
+
+    <fragment
+        android:id="@+id/shareFragment"
+        android:name="com.example.photoshareusingfirestore.ShareFragment"
+        android:label="shareFragment"
+        tools:layout="@layout/fragment_share" >
+        <action
+            android:id="@+id/action_shareFragment_to_showFragment"
+            app:destination="@id/showFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/showFragment"
+        android:name="com.example.photoshareusingfirestore.ShowFragment"
+        android:label="showFragment"
+        tools:layout="@layout/fragment_show">
+        <argument
+            android:name="tag"
+            app:argType="string" />
+        <argument
+            android:name="date"
+            app:argType="string" />
+        <argument
+            android:name="imageUri"
+            app:argType="string" />
+    </fragment>
+</navigation>
