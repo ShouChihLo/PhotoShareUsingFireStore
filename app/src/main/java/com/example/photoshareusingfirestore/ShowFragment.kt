@@ -2,13 +2,12 @@ package com.example.photoshareusingfirestore
 
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import androidx.fragment.app.Fragment
+import coil.load
 import com.example.photoshareusingfirestore.databinding.FragmentShowBinding
 
 class ShowFragment : Fragment() {
@@ -28,10 +27,8 @@ class ShowFragment : Fragment() {
         binding.descriptionText.text = args.tag
         binding.dateText.text = args.date
         //load the image file from the firebase storage
-        Glide.with(binding.imageView)
-            .load(Uri.parse(args.imageUri))
-            .apply(RequestOptions().centerCrop())
-            .into(binding.imageView)
+        //Log.d("Main", args.imageUri)
+        binding.imageView.load(Uri.parse(args.imageUri))
 
         return binding.root
     }

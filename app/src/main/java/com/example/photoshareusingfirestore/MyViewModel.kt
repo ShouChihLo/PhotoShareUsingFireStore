@@ -21,7 +21,8 @@ class MyViewModel : ViewModel() {
     private val db = Firebase.firestore
     val collectionRef = db.collection("messages")
 
-    val newMessage = PostedMessage()
+    var photoUrl: String? = null
+    var messageContent: String? = null
 
     enum class AuthenticationState {
         AUTHENTICATED, UNAUTHENTICATED
@@ -37,45 +38,37 @@ class MyViewModel : ViewModel() {
 
     fun uploadMessage() {
         val user = FirebaseAuth.getInstance().currentUser
+        val message = PostedMessage(messageContent, photoUrl,user!!.displayName, null)
 
-        with(newMessage) {
-            //text has been set
-            //photoUrl has been set via the image picker
-            uploader = user!!.displayName
-            //timestamp will be set by the server time
-        }
-
-        //upload data to the firestore
-        collectionRef.add(newMessage)
+        // write the message to the firestore
+        collectionRef.add(message)
             .addOnSuccessListener { docRef ->
-                    // Build a StorageReference and then upload the image file
-                    val uri = Uri.parse(newMessage.photoUrl)
-                    val key = docRef.id
-                    val storageRef = Firebase.storage
-                        .getReference(user!!.uid)
-                        .child(key!!)
-                        .child(uri.lastPathSegment!!)  //get the file name
-                    putImageInStorage(storageRef, docRef, uri, key)
-                }
+                // Build a StorageReference and then upload the image file
+                val uri = Uri.parse(message.photoUrl)
+                val key = docRef.id
+                val storageRef = Firebase.storage
+                    .getReference(user!!.uid)
+                    .child(key)
+                    .child(uri.lastPathSegment!!)  //get the file name
+                putImageInStorage(storageRef, uri, docRef)
+                // reset old message
+                photoUrl = ""
+                messageContent = ""
+            }
             .addOnFailureListener { e ->
-                Log.d(TAG, "Error adding document to the database", e)
+                Log.d(TAG, "Error adding document to the firestore", e)
             }
     }
 
-    private fun putImageInStorage(storageReference: StorageReference, documentRef: DocumentReference, uri: Uri, key: String?) {
-        // First upload the image to Cloud Storage
-        //Asynchronously uploads from a content URI
+    private fun putImageInStorage(storageReference: StorageReference, uri: Uri, docRef: DocumentReference){
+        // Upload the image to Cloud Storage
         storageReference.putFile(uri)
-            .addOnSuccessListener { taskSnapshot -> // After the image loads, get a public downloadUrl for the image
-                // and add it to the message.
+            .addOnSuccessListener { taskSnapshot -> // Get the public downloadUrl for the image
                 taskSnapshot.metadata!!.reference!!.downloadUrl
                     .addOnSuccessListener { uri ->
-                        val photoUrl = uri.toString()
-                        // update the photoUri to the firestore
-                        documentRef.update("photoUri", photoUrl)
-
-                        //prepare for the next new posted message
-                        newMessage.reset()
+                        // update photoUrl to the downloadUrl in the firestore
+                        val photoUri = uri.toString()
+                        docRef.update( "photoUri", photoUri)
                     }
             }
             .addOnFailureListener { e ->

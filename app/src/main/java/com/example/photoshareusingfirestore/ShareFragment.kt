@@ -1,22 +1,22 @@
 package com.example.photoshareusingfirestore
 
 import android.app.Activity
-import android.content.Intent
+import android.app.Activity.RESULT_OK
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.fragment.app.Fragment
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.photoshareusingfirestore.databinding.FragmentShareBinding
 import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 
 class ShareFragment : Fragment() {
@@ -28,67 +28,56 @@ class ShareFragment : Fragment() {
     private lateinit var adapter: MessageAdapter
     private lateinit var binding: FragmentShareBinding
     private lateinit var viewModel: MyViewModel
-    private lateinit var imagePickUpResult: ActivityResultLauncher<Intent>
-    private lateinit var authResult: ActivityResultLauncher<Intent>
+    //deal with the return of image picker
+    val imagePickUpResult = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        viewModel.photoUrl = uri.toString()
+    }
+    //deal with the return of firebase UI authentication
+    val authResult = registerForActivityResult(FirebaseAuthUIActivityResultContract()) { result ->
+        if (result.resultCode == RESULT_OK)
+            Log.d(TAG, "login success")
+        else
+            Log.d(TAG, "login fail")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_share, container, false)
-        viewModel = ViewModelProvider(this).get(MyViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(MyViewModel::class.java)
 
         //read data from the firebase
         val query = viewModel.collectionRef.orderBy("timestamp")
 
         val options = FirestoreRecyclerOptions.Builder<PostedMessage>()
             .setQuery(query, PostedMessage::class.java)
+            .setLifecycleOwner(viewLifecycleOwner)
             .build()
+
         //configure the recyclerview
         adapter = MessageAdapter(options)
-        //binding.progressBar.visibility = ProgressBar.INVISIBLE
         val manager = LinearLayoutManager(this.activity)
         binding.recyclerView.layoutManager = manager
         binding.recyclerView.adapter = adapter
         binding.recyclerView.addItemDecoration(DividerItemDecoration(this.activity, DividerItemDecoration.VERTICAL))
+        // solve the problem: select picture then crash (solution1)
+        binding.recyclerView.itemAnimator = null
 
-        // Scroll down when a new message arrives
-        // See MyScrollToBottomObserver for details
-//        adapter.registerAdapterDataObserver(
-//            MyScrollToBottomObserver(binding.recyclerView, adapter, manager)
-//        )
-
-        //deal with the return of image picker
-        imagePickUpResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-                val data = result.data!!
-                data.data!!.let {
-                    viewModel.newMessage.photoUrl = it.toString()
-                    Log.d(TAG, it.toString())
-                }
-            }
-        }
-
-        //deal with the return of firebase UI authentication
-        authResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK)
-                Log.d(TAG, "login success")
-            else
-                Log.d(TAG, "login fail")
-        }
+        //adapter.registerAdapterDataObserver(
+        //    MyScrollToBottomObserver(binding.recyclerView, adapter, manager)
+        //)
 
         //enable the photo pickup button
         binding.selectButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-            intent.addCategory(Intent.CATEGORY_OPENABLE)
-            intent.type = "image/*"
-            imagePickUpResult.launch(intent)  //similar to startActivityForResult
+            imagePickUpResult.launch("image/*")
         }
 
         //enable the send message button
         binding.sendButton.setOnClickListener {
-            viewModel.newMessage.text = binding.editDescription.text.toString()
+            viewModel.messageContent = binding.editDescription.text.toString()
             hideKeyboard()
             if (checkMessage()) {
                 viewModel.uploadMessage()
@@ -119,7 +108,7 @@ class ShareFragment : Fragment() {
         // Give users the option to sign in / register with their email
         // If users choose to register with their email,
         // they will need to create a password as well
-        val providers = arrayListOf(
+        val providers = listOf(
             AuthUI.IdpConfig.EmailBuilder().build(),
             AuthUI.IdpConfig.GoogleBuilder().build()
         )
@@ -136,21 +125,18 @@ class ShareFragment : Fragment() {
     }
 
     private fun checkMessage(): Boolean {
-        with(viewModel.newMessage) {
-            return if (text.isNullOrEmpty() || photoUrl.isNullOrEmpty()) {
-                Toast.makeText(
-                    context,
-                    "select one photo with an annotated text",
-                    Toast.LENGTH_SHORT
-                ).show()
-                false
-            } else
-                true
-        }
+        return if (viewModel.photoUrl.isNullOrEmpty() || viewModel.messageContent.isNullOrEmpty()) {
+            Toast.makeText(
+                context,
+                "select one photo with an annotated text",
+                Toast.LENGTH_SHORT
+            ).show()
+            false
+        } else
+            true
     }
 
     fun hideKeyboard() {
-        // Hide the keyboard.
         val imm = context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
@@ -167,14 +153,14 @@ class ShareFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onPause() {
-        adapter.stopListening()  //stop reading data from the database
-        super.onPause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        adapter.startListening()  //star reading data from the database
-    }
+//    override fun onPause() {
+//        adapter.stopListening()  //stop reading data from the database
+//        super.onPause()
+//    }
+//
+//    override fun onResume() {
+//        super.onResume()
+//        adapter.startListening()  //star reading data from the database
+//    }
 
 }
